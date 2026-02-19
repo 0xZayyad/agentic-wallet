@@ -1,0 +1,45 @@
+// ---------------------------------------------------------------------------
+// AgentFactory — Creates agents with strategies and assigns wallets.
+// ---------------------------------------------------------------------------
+
+import type { IAgent } from "../core/interfaces/IAgent.js";
+import { RandomTransferAgent } from "../agents/strategies/RandomTransferStrategy.js";
+
+export type AgentStrategyType = "random-transfer";
+
+export interface AgentFactoryOptions {
+  walletId: string;
+  strategy: AgentStrategyType;
+  chain?: string;
+  maxAmountLamports?: bigint;
+}
+
+export class AgentFactory {
+  /**
+   * Create an agent with the specified strategy.
+   */
+  create(options: AgentFactoryOptions): IAgent {
+    switch (options.strategy) {
+      case "random-transfer":
+        return new RandomTransferAgent(options.walletId, {
+          chain: options.chain ?? "solana",
+          maxAmountLamports: options.maxAmountLamports ?? 100_000_000n,
+        });
+      default:
+        throw new Error(`Unknown agent strategy: ${options.strategy}`);
+    }
+  }
+
+  /**
+   * Create multiple agents with the same strategy.
+   */
+  createMany(
+    walletIds: string[],
+    strategy: AgentStrategyType,
+    options?: { chain?: string; maxAmountLamports?: bigint },
+  ): IAgent[] {
+    return walletIds.map((walletId) =>
+      this.create({ walletId, strategy, ...options }),
+    );
+  }
+}
