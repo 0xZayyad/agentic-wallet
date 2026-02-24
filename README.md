@@ -74,13 +74,29 @@ cp .env.example .env
 
 If you generate new wallets and need testnet/devnet SOL, you can request funds from the [Solana Faucet](https://faucet.solana.com/).
 
-### Run the Simulation
+### The Bounty Demo (Start Here)
+
+To see the Agentic Wallet fulfill all bounty requirements (wallet creation, parallel autonomous execution, SOL transfers, and Orca DeFi swaps):
+
+```bash
+npm run demo
+```
+
+This runs the unified `BountyDemoScenario` which perfectly illustrates the separation of concerns and policy enforcement.
+
+### 📚 Internal Documentation
+
+- **[Architectural Deep Dive](docs/DEEP_DIVE.md)**: Explore the security model, `PolicyEngine`, key isolation, and how AI interacts with the system via the CLI intent runner.
+- **[SKILLS.md](SKILLS.md)**: The machine-readable interface for AI agents.
+
+### Run other Scenarios
 
 ```bash
 npm start
 ```
 
-This runs the `BasicTransferScenario`: 2 agents create wallets, airdrop devnet SOL, and execute random transfers with full policy enforcement.
+This runs the basic `BasicTransferScenario`.
+
 
 ### Development Mode (watch)
 
@@ -182,6 +198,84 @@ export class MultiSigApprovalPolicy implements IPolicy {
 }
 ```
 
+## Wallet Management
+
+The Agentic Wallet includes CLI commands to securely manage your automated agent wallets. This allows you to generate new identities for AI agents without running full simulation scenarios.
+
+To deploy a new wallet and receive a deterministic identity:
+
+```bash
+npm run wallets -- create --label my-new-agent
+```
+
+To list all existing wallets, their public keys, labels, and devnet balances:
+
+```bash
+npm run wallets -- list
+```
+
+## AI-Compatible Intent Interface
+
+### Purpose
+
+The raw-intent runner demonstrates **AI interoperability** and **LLM tool-call compatibility**. By providing a deterministic execution interface that separates decision logic from the execution kernel, it allows this wallet to serve as a secure execution backend for AI agents.
+
+### How It Works
+
+Raw Intent
+→ Zod Validation
+→ PolicyEngine
+→ IntentRouter
+→ Protocol Adapter (e.g., Orca)
+→ Signer
+→ RPC
+→ Confirmation
+
+### Example Usage
+
+Example JSON intent (e.g., `examples/intents/transfer.json`):
+
+```json
+{
+  "type": "transfer",
+  "fromWalletId": "[YOUR EXISTING WALLET ID]",
+  "to": "5tzFkiKscXHK5ZXCGbXZjtY783mrtkK8Cud5xowqY25p",
+  "amount": "5000000",
+  "reasoning": "Test automated transfer via CLI interface"
+}
+```
+
+CLI command example:
+
+```bash
+npm run intent-runner -- --file examples/intents/transfer.json
+# Or inline:
+npm run intent-runner -- --intent '{"type":"transfer",...}'
+```
+
+Expected output:
+
+```
+[INFO] Intent received: transfer (123e4567-e89b-12d3-a456-426614174000)
+[INFO] Validation passed.
+[INFO] Policy evaluation: allowed
+...
+[INFO] Execution successful:
+  Signature: 4x...
+  Explorer: https://explorer.solana.com/tx/4x...?cluster=devnet
+  Duration: 1250ms
+```
+
+### Security Model Recap
+
+- Private keys never leave `IKeyStore`.
+- All intents must pass the `PolicyEngine`.
+- `Executor` is the single execution boundary.
+- Mainnet execution is blocked.
+- No direct RPC access from the interface layer.
+
+This makes the Agentic Wallet an **AI-Ready Financial Execution Kernel**.
+
 ## Extending
 
 ### Adding a New Policy
@@ -212,8 +306,6 @@ npm run typecheck     # Type checking
 
 ## Roadmap
 
-- [ ] Jupiter DEX integration for swap intents
-- [ ] Multi-chain expansion (Ethereum, Sui)
 - [ ] Persistent agent memory
 - [ ] On-chain policy enforcement (program-level guards)
 - [ ] HSM / enclave key storage

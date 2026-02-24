@@ -1,0 +1,6 @@
+{
+  "type": "create_mint",
+  "fromWalletId": "DEUoqik3sTHqHtPjVdnCFN13eVRVZe6gYPDEgx8GvY54",
+  "decimals": 9,
+  "reasoning": "Test SPL token minting via CLI interface"
+}

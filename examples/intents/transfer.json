@@ -1,0 +1,7 @@
+{
+  "type": "transfer",
+  "fromWalletId": "DEUoqik3sTHqHtPjVdnCFN13eVRVZe6gYPDEgx8GvY54",
+  "to": "4Usb5gsxg36LaxaWWH4NmJ5UwEoMpf8WbYzhWhrvWpXw",
+  "amount": "100000",
+  "reasoning": "Test automated transfer via CLI interface"
+}

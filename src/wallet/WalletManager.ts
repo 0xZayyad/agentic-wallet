@@ -4,7 +4,6 @@
 // Exposes ONLY public metadata via IWallet.
 // ---------------------------------------------------------------------------
 
-import { randomUUID } from "node:crypto";
 import type { IKeyStore } from "../core/interfaces/IKeyStore.js";
 import type { IWallet } from "../core/interfaces/IWallet.js";
 import type { ILogger } from "../core/interfaces/ILogger.js";
@@ -46,8 +45,8 @@ export class WalletManager {
     chain: string = "solana",
     label?: string,
   ): Promise<IWallet> {
-    const walletId = randomUUID();
     const keypair = Keypair.generate();
+    const walletId = keypair.publicKey.toBase58(); // Deterministic Keystore filename
 
     // Store secret key in the KeyStore — this is the ONLY place it's held
     await this.keyStore.store(walletId, keypair.secretKey);

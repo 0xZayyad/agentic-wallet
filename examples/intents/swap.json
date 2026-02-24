@@ -1,0 +1,10 @@
+{
+  "type": "swap",
+  "fromWalletId": "DEUoqik3sTHqHtPjVdnCFN13eVRVZe6gYPDEgx8GvY54",
+  "poolAddress": "3NbWhBAni16TmbM8a2Vd4NtoS7vX6C3aHk6F4s8vKweG",
+  "tokenInMint": "So11111111111111111111111111111111111111112",
+  "tokenOutMint": "Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr",
+  "amountIn": "10000000",
+  "minAmountOut": "1000000",
+  "reasoning": "Test Orca swap via CLI interface"
+}

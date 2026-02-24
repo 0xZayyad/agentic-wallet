@@ -58,7 +58,7 @@ export class ScenarioRunner {
     for (let tick = 0; tick < rounds; tick++) {
       this.logger.info(`--- Round ${tick + 1}/${rounds} ---`);
 
-      for (const agent of this.agents) {
+      await Promise.all(this.agents.map(async (agent) => {
         try {
           // Build agent context
           const context = await this.buildAgentContext(agent, tick);
@@ -72,7 +72,7 @@ export class ScenarioRunner {
               agentId: agent.agentId,
               tick,
             });
-            continue;
+            return;
           }
 
           this.logger.info("Agent emitted intent", {
@@ -103,10 +103,10 @@ export class ScenarioRunner {
             error: error instanceof Error ? error.message : "Unknown error",
           });
         }
+      }));
 
-        // Brief delay between agent actions within a round
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      }
+      // Brief delay between rounds
+      await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
     const durationMs = Date.now() - startTime;
