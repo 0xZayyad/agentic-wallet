@@ -6,8 +6,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "tsx watch src/simulation/scenarios/BasicTransferScenario.ts",
-    "start": "tsx src/simulation/scenarios/BasicTransferScenario.ts",
+    "dev": "tsx watch src/simulation/scenarios/TokenEcosystemScenario.ts",
+    "start": "tsx src/simulation/scenarios/TokenEcosystemScenario.ts",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts",

@@ -111,10 +111,68 @@ src/
 
 ## Security Model
 
-- **Key Isolation** — Private keys live exclusively in `IKeyStore`. Only `Signer` retrieves them, uses them once, and discards.
-- **Policy Enforcement** — All intents pass through `PolicyEngine` before any transaction is built. Denial aborts the pipeline.
-- **No Raw AI → Tx** — Agent decisions produce validated `Intent` objects (Zod schemas), never raw RPC calls.
-- **Mainnet Protection** — `ConfigLoader` refuses to start if `SOLANA_CLUSTER=mainnet-beta`.
+Security is the foundational layer of Agentic Wallet. Operations are strictly gated, preventing autonomous agents from acting maliciously or defecting while preserving their ability to make useful decisions.
+
+- **Key Isolation** — Private keys live exclusively in `IKeyStore`. Only `Signer` retrieves them, uses them once, and discards them from memory. Agents only possess a UUID.
+- **Policy Enforcement** — All intents pass through `PolicyEngine` before any transaction is built. Denial aborts the pipeline completely.
+- **No Raw AI → Tx** — Agent decisions produce validated `Intent` objects (Zod schemas), never raw RPC payload construction.
+- **Mainnet Protection** — `ConfigLoader` refuses to start if `SOLANA_CLUSTER=mainnet-beta` without additional environment flags.
+- **Auditable Intent Reasoning** — Agents attach a `reasoning` string to every action, logged transparently before execution.
+
+### Security Deep Dive: Extensible Policies
+
+The `PolicyEngine` provides the true power of the wallet. Rather than hardcoding safety directly into the agent logic, you can protect the infrastructure by registering custom policies. Every `Intent` emitted by an agent is evaluated against these rules:
+
+#### Example 1: `CircuitBreakerPolicy`
+This policy monitors win/loss rates or total drained value. If the agent's performance drops below a threshold within a sliding window, the circuit breaker trips, universally denying all future intents.
+
+```typescript
+import { IPolicy, PolicyContext, PolicyDecision } from "../../interfaces/IPolicy.js";
+import { Intent } from "../../intents/Intent.js";
+
+export class CircuitBreakerPolicy implements IPolicy {
+  readonly id = "circuit-breaker";
+  private isTripped = false;
+
+  constructor(private maxDrawdown: bigint) {}
+
+  async evaluate(intent: Intent, context: PolicyContext): Promise<PolicyDecision> {
+    if (this.isTripped) {
+      return { policyId: this.id, allowed: false, reason: "Circuit breaker is active." };
+    }
+    
+    // Logic to evaluate drawdown (omitted for brevity)
+    // if (currentDrawdown > this.maxDrawdown) this.isTripped = true;
+
+    return { policyId: this.id, allowed: true };
+  }
+}
+```
+
+#### Example 2: `MultiSigApprovalPolicy`
+For high-value intents, this policy halts the execution pipeline and pings a webhook or database, requiring human validation (or DAO consensus) before the `Intent` is allowed to proceed to the transaction builder.
+
+```typescript
+export class MultiSigApprovalPolicy implements IPolicy {
+  readonly id = "multisig-approval";
+  
+  constructor(private thresholdLamports: bigint) {}
+
+  async evaluate(intent: Intent, context: PolicyContext): Promise<PolicyDecision> {
+    if (intent.type === "transfer" && intent.amount > this.thresholdLamports) {
+      const isApproved = await checkApprovalDB(intent.id);
+      if (!isApproved) {
+        return { 
+          policyId: this.id, 
+          allowed: false, 
+          reason: `Requires human MultiSig approval for amounts > ${this.thresholdLamports}.` 
+        };
+      }
+    }
+    return { policyId: this.id, allowed: true };
+  }
+}
+```
 
 ## Extending
 

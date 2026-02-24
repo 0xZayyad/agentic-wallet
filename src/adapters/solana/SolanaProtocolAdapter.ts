@@ -78,4 +78,8 @@ export class SolanaProtocolAdapter implements IProtocolAdapter {
       throw new ExecutionError("confirm", message, error instanceof Error ? error : undefined);
     }
   }
+
+  getExplorerUrl(txHash: string): string {
+    return this.client.getSolscanUrl(txHash);
+  }
 }

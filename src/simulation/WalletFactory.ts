@@ -38,7 +38,13 @@ export class WalletFactory {
       lamports: airdropLamports,
     });
 
-    await this.solanaClient.requestAirdrop(publicKey, airdropLamports);
+    try {
+      await this.solanaClient.requestAirdrop(publicKey, airdropLamports);
+    } catch (error) {
+      this.logger.warn(`Failed to fund wallet ${publicKey} via airdrop:`, {
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
 
     return wallet;
   }

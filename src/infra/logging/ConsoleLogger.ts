@@ -41,15 +41,32 @@ export class ConsoleLogger implements ILogger {
   private log(level: LogLevel, message: string, meta?: Record<string, unknown>): void {
     if (LOG_LEVEL_PRIORITY[level] < this.minLevel) return;
 
-    const entry = {
-      timestamp: new Date().toISOString(),
-      level,
-      context: this.context,
-      message,
-      ...meta,
+    const timestamp = new Date().toISOString();
+
+    // ANSI color codes
+    const colors = {
+      reset: "\x1b[0m",
+      dim: "\x1b[2m",
+      info: "\x1b[36m", // Cyan
+      warn: "\x1b[33m", // Yellow
+      error: "\x1b[31m", // Red
+      debug: "\x1b[35m", // Magenta
+      context: "\x1b[32m", // Green
     };
 
-    const output = JSON.stringify(entry, this.bigIntReplacer);
+    const color = colors[level];
+    const levelStr = `[${level.toUpperCase()}]`.padEnd(7);
+    const ctxStr = `[${this.context}]`;
+
+    // Format metadata if it exists
+    let metaStr = "";
+    if (meta && Object.keys(meta).length > 0) {
+      // Stringify meta nicely, but keep it on one line if small, or pretty print if large
+      const metaJson = JSON.stringify(meta, this.bigIntReplacer);
+      metaStr = `\n${colors.dim}  ↳ ${metaJson}${colors.reset}`;
+    }
+
+    const output = `${colors.dim}${timestamp}${colors.reset} ${color}${levelStr}${colors.reset} ${colors.context}${ctxStr}${colors.reset} ${message}${metaStr}`;
 
     switch (level) {
       case "error":

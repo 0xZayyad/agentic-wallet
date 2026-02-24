@@ -1,6 +1,6 @@
 // ---------------------------------------------------------------------------
 // SolanaClient — Wraps @solana/web3.js Connection for RPC interactions.
-// Provides chain-specific operations: balance queries, airdrops, etc.
+// Provides chain-specific operations: balance queries, airdrops, explorer links.
 // ---------------------------------------------------------------------------
 
 import { Connection, PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
@@ -9,10 +9,31 @@ import type { ILogger } from "../../core/interfaces/ILogger.js";
 export class SolanaClient {
   readonly connection: Connection;
   private readonly logger: ILogger;
+  readonly cluster: string;
 
   constructor(rpcUrl: string, logger: ILogger) {
     this.connection = new Connection(rpcUrl, "confirmed");
     this.logger = logger;
+
+    // Infer cluster from RPC URL for explorer link generation
+    if (rpcUrl.includes("devnet")) {
+      this.cluster = "devnet";
+    } else if (rpcUrl.includes("testnet")) {
+      this.cluster = "testnet";
+    } else {
+      this.cluster = "mainnet-beta";
+    }
+  }
+
+  /**
+   * Returns a Solscan URL for a given transaction signature.
+   * Automatically appends the correct cluster parameter for non-mainnet clusters.
+   */
+  getSolscanUrl(signature: string): string {
+    const clusterParam = this.cluster !== "mainnet-beta"
+      ? `?cluster=${this.cluster}`
+      : "";
+    return `https://solscan.io/tx/${signature}${clusterParam}`;
   }
 
   /**
@@ -46,7 +67,11 @@ export class SolanaClient {
       lastValidBlockHeight: latestBlockhash.lastValidBlockHeight,
     });
 
-    this.logger.info("Airdrop confirmed", { publicKey, signature });
+    this.logger.info("Airdrop confirmed", {
+      publicKey,
+      signature,
+      solscan: this.getSolscanUrl(signature),
+    });
     return signature;
   }
 

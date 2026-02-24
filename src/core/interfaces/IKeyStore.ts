@@ -12,4 +12,6 @@ export interface IKeyStore {
   has(walletId: string): Promise<boolean>;
   /** Permanently delete key material */
   delete(walletId: string): Promise<void>;
+  /** Return all stored wallet IDs */
+  listAll(): Promise<string[]>;
 }

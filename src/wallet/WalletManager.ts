@@ -104,4 +104,45 @@ export class WalletManager {
     }
     return wallet.getPublicKey();
   }
+
+  /**
+   * Load all previously stored wallets from the KeyStore into memory.
+   */
+  async loadExistingWallets(chain: string = "solana"): Promise<IWallet[]> {
+    const loadedWallets: IWallet[] = [];
+    const walletIds = await this.keyStore.listAll();
+
+    for (const walletId of walletIds) {
+      if (this.wallets.has(walletId)) {
+        continue;
+      }
+
+      try {
+        const secretKey = await this.keyStore.retrieve(walletId);
+        const keypair = Keypair.fromSecretKey(secretKey);
+
+        const info: WalletInfo = {
+          walletId,
+          publicKey: keypair.publicKey.toBase58(),
+          chain,
+          createdAt: new Date().toISOString(),
+          label: `loaded-${walletId.slice(0, 8)}`,
+        };
+
+        const wallet = new ManagedWallet(info);
+        this.wallets.set(walletId, wallet);
+        loadedWallets.push(wallet);
+
+        this.logger.info("Wallet loaded from storage", {
+          walletId,
+          publicKey: info.publicKey,
+          chain,
+        });
+      } catch (error) {
+        this.logger.error(`Failed to load wallet ${walletId} from storage`, { error });
+      }
+    }
+
+    return loadedWallets;
+  }
 }

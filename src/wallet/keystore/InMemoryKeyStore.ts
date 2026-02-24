@@ -37,4 +37,8 @@ export class InMemoryKeyStore implements IKeyStore {
     }
     this.keys.delete(walletId);
   }
+
+  async listAll(): Promise<string[]> {
+    return Array.from(this.keys.keys());
+  }
 }

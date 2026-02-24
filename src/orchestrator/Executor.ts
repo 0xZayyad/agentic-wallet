@@ -120,9 +120,12 @@ export class Executor implements IExecutor {
       }
 
       const elapsed = Date.now() - startTime;
+      const explorerUrl = adapter.getExplorerUrl ? adapter.getExplorerUrl(txHash) : undefined;
+
       this.logger.info("Pipeline completed", {
         intentId: intent.id,
         txHash,
+        explorerUrl,
         elapsedMs: elapsed,
       });
 
@@ -131,7 +134,7 @@ export class Executor implements IExecutor {
         txHash,
         chain: intent.chain,
         confirmedAt: new Date().toISOString(),
-        meta: { elapsedMs: elapsed },
+        meta: { elapsedMs: elapsed, explorerUrl },
       };
     } catch (error) {
       const message =

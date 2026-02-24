@@ -4,7 +4,7 @@
 // Suitable for devnet prototype; production would use HSM / enclave.
 // ---------------------------------------------------------------------------
 
-import { readFile, writeFile, mkdir, unlink, access } from "node:fs/promises";
+import { readFile, writeFile, mkdir, unlink, access, readdir } from "node:fs/promises";
 import { join } from "node:path";
 import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from "node:crypto";
 import type { IKeyStore } from "../../core/interfaces/IKeyStore.js";
@@ -81,5 +81,16 @@ export class EncryptedFileKeyStore implements IKeyStore {
     // Sanitize walletId to prevent path traversal
     const safeId = walletId.replace(/[^a-zA-Z0-9\-]/g, "");
     return join(this.baseDir, `${safeId}.key`);
+  }
+
+  async listAll(): Promise<string[]> {
+    try {
+      const files = await readdir(this.baseDir);
+      return files
+        .filter((f) => f.endsWith(".key"))
+        .map((f) => f.slice(0, -4));
+    } catch {
+      return []; // Return empty if directory doesn't exist
+    }
   }
 }

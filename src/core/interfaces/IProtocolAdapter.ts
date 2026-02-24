@@ -18,4 +18,7 @@ export interface IProtocolAdapter {
 
   /** Wait for transaction confirmation */
   confirmTransaction(txHash: string): Promise<boolean>;
+
+  /** Optional: get a block explorer URL for a confirmed transaction */
+  getExplorerUrl?(txHash: string): string;
 }
