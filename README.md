@@ -62,11 +62,17 @@ Agent.decide()
 ### Setup
 
 ```bash
-git clone <repo-url>
+git clone https://github.com/0xZayyad/agentic-wallet.git
 cd agentic-wallet
 npm install
 cp .env.example .env
 ```
+
+### Faucet Instructions
+
+> **Note:** We've intentionally created and funded two wallets for testing purposes only. These are available in the `./.secrets` directory, so you can run the simulation immediately without needing a faucet.
+
+If you generate new wallets and need testnet/devnet SOL, you can request funds from the [Solana Faucet](https://faucet.solana.com/).
 
 ### Run the Simulation
 
@@ -84,7 +90,7 @@ npm run dev
 
 ## Project Structure
 
-```
+```bash
 src/
 ├── core/           # Pure domain: intents, interfaces, types, errors
 ├── agents/         # Agent logic: BaseAgent, strategies, registry
@@ -124,6 +130,7 @@ Security is the foundational layer of Agentic Wallet. Operations are strictly ga
 The `PolicyEngine` provides the true power of the wallet. Rather than hardcoding safety directly into the agent logic, you can protect the infrastructure by registering custom policies. Every `Intent` emitted by an agent is evaluated against these rules:
 
 #### Example 1: `CircuitBreakerPolicy`
+
 This policy monitors win/loss rates or total drained value. If the agent's performance drops below a threshold within a sliding window, the circuit breaker trips, universally denying all future intents.
 
 ```typescript
@@ -150,6 +157,7 @@ export class CircuitBreakerPolicy implements IPolicy {
 ```
 
 #### Example 2: `MultiSigApprovalPolicy`
+
 For high-value intents, this policy halts the execution pipeline and pings a webhook or database, requiring human validation (or DAO consensus) before the `Intent` is allowed to proceed to the transaction builder.
 
 ```typescript
