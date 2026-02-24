@@ -18,6 +18,8 @@ import {
   createAssociatedTokenAccountInstruction,
 } from "@solana/spl-token";
 import { Keypair } from "@solana/web3.js";
+import { swap, setPayerFromBytes } from '@orca-so/whirlpools';
+import { address } from '@solana/kit';
 import type {
   Intent,
   TransferIntent,
@@ -40,15 +42,18 @@ export class SolanaTransactionBuilder {
   private readonly client: SolanaClient;
   private readonly logger: ILogger;
   private readonly getPublicKey: (walletId: string) => string;
+  private readonly getSecretKey?: (walletId: string) => Promise<Uint8Array>;
 
   constructor(
     client: SolanaClient,
     logger: ILogger,
     getPublicKey: (walletId: string) => string,
+    getSecretKey?: (walletId: string) => Promise<Uint8Array>,
   ) {
     this.client = client;
     this.logger = logger;
     this.getPublicKey = getPublicKey;
+    this.getSecretKey = getSecretKey;
   }
 
   /**
@@ -132,17 +137,36 @@ export class SolanaTransactionBuilder {
     };
   }
 
-  /**
-   * Build a swap transaction.
-   * Placeholder: in production, this would call Jupiter or Orca APIs.
-   */
   private async buildSwap(intent: SwapIntent): Promise<ChainTransaction> {
-    // TODO: Integrate with Jupiter/Orca DEX API
-    // For the prototype, we create a placeholder transaction
-    this.logger.warn("Swap transactions are not yet implemented — using placeholder", {
+    if (!this.getSecretKey) {
+      throw new ExecutionError("build", "getSecretKey callback is required for Orca swaps");
+    }
+
+    const secretKey = await this.getSecretKey(intent.fromWalletId);
+    await setPayerFromBytes(new Uint8Array(secretKey));
+
+    const poolAddressStr = intent.poolAddress;
+    const whirlpoolAddress = address(poolAddressStr);
+    const mintAddress = address(intent.tokenInMint);
+    const inputAmount = intent.amountIn;
+
+    this.logger.info("Requesting Orca swap quote", {
       intentId: intent.id,
-      tokenIn: intent.tokenInMint,
-      tokenOut: intent.tokenOutMint,
+      pool: poolAddressStr,
+      mint: intent.tokenInMint,
+      inputAmount: inputAmount.toString(),
+    });
+
+    const { instructions, quote, callback: sendTx } = await swap(
+      { inputAmount, mint: mintAddress },
+      whirlpoolAddress,
+      100 // default slippage in bips
+    );
+
+    this.logger.info("Orca swap quote received", {
+      intentId: intent.id,
+      tokenEstOut: quote.tokenEstOut.toString(),
+      numInstructions: instructions.length,
     });
 
     const fromPubkey = new PublicKey(this.getPublicKey(intent.fromWalletId));
@@ -160,8 +184,8 @@ export class SolanaTransactionBuilder {
         requireAllSignatures: false,
         verifySignatures: false,
       }),
-      programIds: ["JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4"],
-      meta: { placeholder: true },
+      programIds: ["whirLbMiicVdio4qvUfM5KAg6Ct8VwpYzGff3uctyCc"],
+      meta: { placeholder: true, sendTx, quote },
     };
   }
 

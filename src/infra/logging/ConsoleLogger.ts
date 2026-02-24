@@ -66,7 +66,7 @@ export class ConsoleLogger implements ILogger {
       metaStr = `\n${colors.dim}  ↳ ${metaJson}${colors.reset}`;
     }
 
-    const output = `${colors.dim}${timestamp}${colors.reset} ${color}${levelStr}${colors.reset} ${colors.context}${ctxStr}${colors.reset} ${message}${metaStr}`;
+    const output = `${colors.dim}[${timestamp.slice(11, 19)}]${colors.reset}${color}${levelStr}${colors.reset}${colors.context}${ctxStr}${colors.reset} ${message}${metaStr}`;
 
     switch (level) {
       case "error":

@@ -46,6 +46,7 @@ export class PortfolioRebalanceAgent extends BaseAgent {
       type: "swap",
       chain: this.config.chain!,
       fromWalletId: this.walletId,
+      poolAddress: "placeholder_pool_address", // Placeholder as this is a strategy template
       tokenInMint: tokenMints[0]!,
       tokenOutMint: tokenMints[1]!,
       amountIn: 10_000_000n, // Placeholder

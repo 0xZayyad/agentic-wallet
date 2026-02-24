@@ -5,14 +5,16 @@
 import type { IAgent } from "../core/interfaces/IAgent.js";
 import { RandomTransferAgent } from "../agents/strategies/RandomTransferStrategy.js";
 import { TokenManagerAgent } from "../agents/strategies/TokenManagerAgent.js";
+import { OrcaSwapAgent, type OrcaSwapConfig } from "../agents/strategies/OrcaSwapAgent.js";
 
-export type AgentStrategyType = "random-transfer" | "token-manager";
+export type AgentStrategyType = "random-transfer" | "token-manager" | "orca-swap";
 
 export interface AgentFactoryOptions {
   walletId: string;
   strategy: AgentStrategyType;
   chain?: string;
   maxAmountLamports?: bigint;
+  orcaSwapConfig?: OrcaSwapConfig;
 }
 
 export class AgentFactory {
@@ -28,6 +30,11 @@ export class AgentFactory {
         });
       case "token-manager":
         return new TokenManagerAgent(options.walletId);
+      case "orca-swap":
+        if (!options.orcaSwapConfig) {
+          throw new Error("orcaSwapConfig is required for orca-swap strategy");
+        }
+        return new OrcaSwapAgent(options.walletId, options.orcaSwapConfig);
       default:
         throw new Error(`Unknown agent strategy: ${options.strategy}`);
     }

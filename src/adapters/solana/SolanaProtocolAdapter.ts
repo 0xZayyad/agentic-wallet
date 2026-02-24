@@ -38,8 +38,13 @@ export class SolanaProtocolAdapter implements IProtocolAdapter {
     }
   }
 
-  async sendTransaction(signedTx: Uint8Array): Promise<string> {
+  async sendTransaction(signedTx: Uint8Array, chainTx: ChainTransaction): Promise<string> {
     try {
+      if (chainTx.meta?.sendTx && typeof chainTx.meta.sendTx === "function") {
+        this.logger.info("Executing managed sendTx callback (Orca)");
+        return await chainTx.meta.sendTx();
+      }
+
       const signature = await this.client.connection.sendRawTransaction(
         Buffer.from(signedTx),
         { skipPreflight: false, preflightCommitment: "confirmed" },

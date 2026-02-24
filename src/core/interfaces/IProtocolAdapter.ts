@@ -14,7 +14,7 @@ export interface IProtocolAdapter {
   buildTransaction(intent: Intent): Promise<ChainTransaction>;
 
   /** Submit a signed transaction to the network */
-  sendTransaction(signedTx: Uint8Array): Promise<string>;
+  sendTransaction(signedTx: Uint8Array, chainTx: ChainTransaction): Promise<string>;
 
   /** Wait for transaction confirmation */
   confirmTransaction(txHash: string): Promise<boolean>;

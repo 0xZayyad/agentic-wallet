@@ -105,7 +105,7 @@ export class Executor implements IExecutor {
       );
 
       // ── Stage 5: Send Transaction ──────────────────────────────────
-      const txHash = await adapter.sendTransaction(signedTx);
+      const txHash = await adapter.sendTransaction(signedTx, chainTx);
 
       // ── Stage 6: Confirm Transaction ───────────────────────────────
       const confirmed = await adapter.confirmTransaction(txHash);

@@ -38,6 +38,8 @@ export type TransferIntent = z.infer<typeof TransferIntentSchema>;
 
 export const SwapIntentSchema = BaseIntentSchema.extend({
   type: z.literal("swap"),
+  /** Pool address for the Orca Whirlpool or AMM */
+  poolAddress: z.string().min(1),
   /** Mint address of the input token */
   tokenInMint: z.string().min(1),
   /** Mint address of the output token */

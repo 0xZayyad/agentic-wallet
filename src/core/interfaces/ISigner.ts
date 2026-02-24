@@ -12,4 +12,11 @@ export interface ISigner {
    * @returns Signed transaction bytes ready for submission.
    */
   sign(walletId: string, payload: Uint8Array): Promise<Uint8Array>;
+
+  /**
+   * Retrieve the raw secret key for the wallet.
+   * @param walletId - The wallet to retrieve the key for.
+   * @returns The raw secret key bytes.
+   */
+  getSecretKey(walletId: string): Promise<Uint8Array>;
 }

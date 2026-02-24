@@ -47,4 +47,16 @@ export class Signer implements ISigner {
       throw new SigningError(walletId, message, error instanceof Error ? error : undefined);
     }
   }
+  /**
+   * Retrieve the raw secret key for the wallet.
+   * This is required for Orca Swap integration.
+   */
+  async getSecretKey(walletId: string): Promise<Uint8Array> {
+    try {
+      return await this.keyStore.retrieve(walletId);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Unknown keystone retrieval error";
+      throw new SigningError(walletId, message, error instanceof Error ? error : undefined);
+    }
+  }
 }
