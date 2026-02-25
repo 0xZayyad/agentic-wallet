@@ -6,6 +6,8 @@
 
 [![Watch the Demo](https://img.shields.io/badge/▶_Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/cefW4QRo1Ok)
 
+[Watch Demo](https://youtu.be/cefW4QRo1Ok)
+
 ## Overview
 
 Agentic Wallet is a production-grade prototype where AI agents can programmatically create wallets, sign transactions, hold SOL/SPL tokens, and interact with Solana protocols — all autonomously in a multi-agent simulation.
