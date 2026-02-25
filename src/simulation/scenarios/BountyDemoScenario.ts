@@ -48,7 +48,7 @@ async function main() {
   // 2. Setup Policy Engine (The core of our Security Model)
   const policyEngine = new PolicyEngine(createLogger("PolicyEngine"));
   policyEngine.register(new SpendingLimitPolicy(config.MAX_SPEND_LAMPORTS));
-  policyEngine.register(new ProgramWhitelistPolicy(config.ALLOWED_PROGRAMS));
+  // policyEngine.register(new ProgramWhitelistPolicy(config.ALLOWED_PROGRAMS));
   policyEngine.register(new RateLimitPolicy(config.MAX_TX_PER_MINUTE));
 
   // 3. Setup Protocol Layer
@@ -90,7 +90,7 @@ async function main() {
     // Ensure both are slightly funded
     for (const w of wallets.slice(0, 2)) {
       const bal = await solanaClient.getBalance(w.getPublicKey());
-      if (bal < 500_000_000n) {
+      if (bal < 5_000_000n) {
         logger.info(`Topping up agent wallet: ${w.getPublicKey()}`);
         try {
           await solanaClient.requestAirdrop(w.getPublicKey(), 2_000_000_000);

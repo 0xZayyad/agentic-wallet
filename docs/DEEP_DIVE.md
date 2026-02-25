@@ -1,6 +1,6 @@
 # Agentic Wallet: Architectural Deep Dive
 
-This document provides a comprehensive look at the design decisions, security models, and AI interaction patterns of the Agentic Wallet prototype. It is designed to evaluate against the highest standards of autonomous AI integrations on the Solana blockchain.
+This document provides a comprehensive look at the design decisions, security model, and AI interaction patterns of the Agentic Wallet. It covers how autonomous agents safely operate on the Solana blockchain without direct access to private keys or raw RPC construction.
 
 ---
 
@@ -30,6 +30,7 @@ To operate in a sandboxed, autonomous environment securely, the `IKeyStore` boun
 ## 3. Scalability: Supporting Multiple Agents Independently
 
 The `ScenarioRunner` is built to run simulation loops concurrently.
+
 - Agents are entirely stateless locally. They accept the chain state (balances) and their own UUID, decide on an action, and complete the tick.
 - The system heavily uses `Promise.all()` to ensure that `N` agents can think, construct intents, and submit them simultaneously.
 - Since agents interact through the `IntentRouter` instead of locking global state, you can scale the system horizontally by placing an event queue (like Kafka or Redis) directly in front of the IntentRouter.
@@ -41,9 +42,11 @@ The `ScenarioRunner` is built to run simulation loops concurrently.
 One of the standout features of the Agentic Wallet is how external AI (like GPT-4, Claude, or local models) can plug into it without writing TypeScript.
 
 ### The Problem: Hallucinated Transactions
+
 LLMs are terrible at constructing raw binary RPC structures, correctly calculating nonce/recent blockhashes, or handling ed25519 cryptography.
 
 ### The Solution: The CLI Intent Runner
+
 We expose the `IntentRouter` directly via the terminal. An AI model merely has to produce a standard JSON payload representing its goal.
 
 ```json
@@ -57,11 +60,13 @@ We expose the `IntentRouter` directly via the terminal. An AI model merely has t
 ```
 
 The AI can then execute this safely by shelling out to the CLI toolkit provided in the project:
+
 ```bash
 npm run intent-runner -- --intent '{"type":"transfer","fromWalletId":"..."}'
 ```
 
 ### The AI Experience
+
 1. **Reads `SKILLS.md`**: The AI agent reads the SKILLS.md file in the root directory to understand the available JSON schemas.
 2. **Observes state**: The AI checks its balance.
 3. **Decides & Executes**: The AI generates the JSON above, and runs the CLI command.

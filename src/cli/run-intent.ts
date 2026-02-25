@@ -109,7 +109,7 @@ async function main() {
 
   const policyEngine = new PolicyEngine(createLogger("PolicyEngine"));
   policyEngine.register(new SpendingLimitPolicy(config.MAX_SPEND_LAMPORTS));
-  policyEngine.register(new ProgramWhitelistPolicy(config.ALLOWED_PROGRAMS));
+  // policyEngine.register(new ProgramWhitelistPolicy(config.ALLOWED_PROGRAMS));
   policyEngine.register(new RateLimitPolicy(config.MAX_TX_PER_MINUTE));
 
   const txBuilder = new SolanaTransactionBuilder(

@@ -2,6 +2,10 @@
 
 > Autonomous wallet infrastructure for AI agents on Solana.
 
+## 🎬 Demo
+
+[![Watch the Demo](https://img.shields.io/badge/▶_Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/cefW4QRo1Ok)
+
 ## Overview
 
 Agentic Wallet is a production-grade prototype where AI agents can programmatically create wallets, sign transactions, hold SOL/SPL tokens, and interact with Solana protocols — all autonomously in a multi-agent simulation.
@@ -87,21 +91,26 @@ This runs the unified `BountyDemoScenario` which perfectly illustrates the separ
 ### 📚 Internal Documentation
 
 - **[Architectural Deep Dive](docs/DEEP_DIVE.md)**: Explore the security model, `PolicyEngine`, key isolation, and how AI interacts with the system via the CLI intent runner.
-- **[SKILLS.md](SKILLS.md)**: The machine-readable interface for AI agents.
+- **[SKILLS.md](SKILLS.md)**: Machine-readable intent schemas and capabilities for AI agent integration.
 
-### Run other Scenarios
+### Run Individual Scenarios
+
+The project includes several standalone scenarios you can run independently:
 
 ```bash
-npm start
+npm run start:transfer   # Basic SOL transfer between agents
+npm run start:swap       # Multi-agent Orca Whirlpools swap
+npm run start:eco        # Token ecosystem (mint, distribute, swap)
 ```
-
-This runs the basic `BasicTransferScenario`.
-
 
 ### Development Mode (watch)
 
+Run any scenario in watch mode for live-reload during development:
+
 ```bash
-npm run dev
+npm run dev:transfer     # Watch mode: basic transfer
+npm run dev:swap         # Watch mode: multi-agent swap
+npm run dev:eco          # Watch mode: token ecosystem
 ```
 
 ## Project Structure
@@ -265,14 +274,6 @@ Expected output:
   Explorer: https://explorer.solana.com/tx/4x...?cluster=devnet
   Duration: 1250ms
 ```
-
-### Security Model Recap
-
-- Private keys never leave `IKeyStore`.
-- All intents must pass the `PolicyEngine`.
-- `Executor` is the single execution boundary.
-- Mainnet execution is blocked.
-- No direct RPC access from the interface layer.
 
 This makes the Agentic Wallet an **AI-Ready Financial Execution Kernel**.
 
