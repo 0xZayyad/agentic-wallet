@@ -157,6 +157,9 @@ export class SolanaTransactionBuilder {
       inputAmount: inputAmount.toString(),
     });
 
+    // In Orca SDK, slippage must be passed in basis points before we see the quote.
+    // If we wanted exact minAmountOut matching, we'd need quote first.
+    // Defaulting to 100 bps (1%) as requested.
     const { instructions, quote, callback: sendTx } = await swap(
       { inputAmount, mint: mintAddress },
       whirlpoolAddress,

@@ -71,28 +71,28 @@ Transfers native SOL or SPL tokens to a recipient.
 
 ### `swap`
 
-Swaps tokens via the Orca Whirlpools protocol.
+Swaps tokens via the Orca Whirlpools protocol. **Note for LLM Agents:** You do not need to know the raw `poolAddress` or mint addresses. You can use human-readable token symbols (e.g. "SOL", "USDC") and the system will automatically resolve them and discover the best pool.
 
 ```json
 {
   "type": "swap",
   "fromWalletId": "DEUoqik3sTHqHtPjVdnCFN13eVRVZe6gYPDEgx8GvY54",
-  "poolAddress": "3KBZiL2g8C7tiJ32hTv5v3KM7aK9htpqTw4cTXz1HvPt",
-  "tokenInMint": "So11111111111111111111111111111111111111112",
-  "tokenOutMint": "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
-  "amountIn": "100000",
-  "minAmountOut": "100000",
-  "reasoning": "Swapping WSOL to USDC to preserve capital"
+  "tokenInMint": "SOL",
+  "tokenOutMint": "USDC",
+  "amountIn": "1000000",
+  "minAmountOut": "0",
+  "slippageBps": 100,
+  "reasoning": "Swapping 0.001 SOL for USDC with 1% slippage"
 }
 ```
 
 | Field | Type | Required | Description |
 |---|---|---|---|
-| `poolAddress` | `string` | ✅ | Orca Whirlpool or AMM pool address |
-| `tokenInMint` | `string` | ✅ | Mint address of the input token |
-| `tokenOutMint` | `string` | ✅ | Mint address of the output token |
+| `tokenInMint` | `string` | ✅ | Input token symbol (e.g. "SOL") or mint address |
+| `tokenOutMint` | `string` | ✅ | Output token symbol (e.g. "USDC") or mint address |
 | `amountIn` | `string` → `BigInt` | ✅ | Amount of input token (smallest unit) |
-| `minAmountOut` | `string` → `BigInt` | ✅ | Minimum acceptable output amount (slippage protection) |
+| `minAmountOut` | `string` → `BigInt` | ✅ | Set to "0" unless specific hard floor is needed |
+| `slippageBps` | `number` | Optional | Slippage tolerance in basis points. Defaults to `100` (1%) |
 
 ### `create_mint`
 
@@ -159,7 +159,7 @@ Intent JSON → Validation → PolicyEngine → Build Tx → Sign → Send → C
 ```
 
 | Stage | What Happens | Error Code on Failure |
-|---|---|---|
+| --- | --- | --- |
 | **Validation** | Zod schema parsing | `VALIDATION_ERROR` |
 | **Policy** | All registered policies evaluate the intent | `POLICY_VIOLATION` |
 | **Build** | Protocol adapter constructs the raw transaction | `PIPELINE_ERROR` |
@@ -213,3 +213,4 @@ When running inside a simulation, agents receive an `AgentContext` each tick:
 | `balance` | `bigint` | Current native SOL balance (lamports) |
 | `knownWallets` | `string[]` | Public keys of all visible participants |
 | `meta` | `Record<string, unknown>` | Arbitrary metadata. Read `meta.lastMintAddress` to discover newly created tokens from peers |
+

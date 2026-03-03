@@ -1,0 +1,9 @@
+{
+  "type": "swap",
+  "fromWalletId": "DEUoqik3sTHqHtPjVdnCFN13eVRVZe6gYPDEgx8GvY54",
+  "tokenInMint": "SOL",
+  "tokenOutMint": "USDC",
+  "amountIn": "1000000",
+  "minAmountOut": "0",
+  "reasoning": "Swapping 0.001 SOL to USDC — token names and pool resolved automatically by the LLM layer"
+}

@@ -80,9 +80,9 @@ cp .env.example .env
 
 If you generate new wallets and need testnet/devnet SOL, you can request funds from the [Solana Faucet](https://faucet.solana.com/).
 
-### The Bounty Demo (Start Here)
+### The Bounty Demo
 
-To see the Agentic Wallet fulfill all bounty requirements (wallet creation, parallel autonomous execution, SOL transfers, and Orca DeFi swaps):
+To see the Agentic Wallet fulfill all bounty requirements (wallet creation, parallel autonomous execution, SOL transfers, and Orca DeFi swaps) in the console:
 
 ```bash
 npm run demo
@@ -90,8 +90,19 @@ npm run demo
 
 This runs the unified `BountyDemoScenario` which perfectly illustrates the separation of concerns and policy enforcement.
 
+### 🤖 Running the AI Chat UI (Start Here)
+
+To interact with the LLMAgent across all your devnet wallets via our Next.js frontend, simply start the development servers:
+
+```bash
+npm run dev
+```
+
+This command runs both the backend Fastify API (`:3001`) and the Next.js frontend UI (`:3000`) concurrently. Open [http://localhost:3000](http://localhost:3000) in your browser to start chatting with the agent!
+
 ### 📚 Internal Documentation
 
+- **[LLM Integration](docs/LLM.md)**: Details on the AI SDK client, Gemini configuration, LLMAgent, API server, and Next.js frontend integration.
 - **[Architectural Deep Dive](docs/DEEP_DIVE.md)**: Explore the security model, `PolicyEngine`, key isolation, and how AI interacts with the system via the CLI intent runner.
 - **[SKILLS.md](SKILLS.md)**: Machine-readable intent schemas and capabilities for AI agent integration.
 
@@ -124,8 +135,11 @@ src/
 ├── wallet/         # Wallet engine: WalletManager, Signer, KeyStore, policies
 ├── adapters/       # Protocol adapters: Solana client, tx builder, token/swap
 ├── orchestrator/   # Execution pipeline: Executor, IntentRouter
+├── llm/            # AI Integration: AI SDK client, Gemini backend, LLMAgent
+├── server/         # API Server: Fastify routes bridging kernel & frontend
 ├── infra/          # Infrastructure: config, logging, RPC, storage
 └── simulation/     # Simulation runner: factories, scenarios
+frontend/           # Next.js UI: React chat interface, responsive layout
 ```
 
 ## Configuration
