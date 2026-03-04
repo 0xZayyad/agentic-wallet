@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Send, Bot, User, AlertTriangle, ChevronDown, ChevronRight,
   CheckCircle2, XCircle, Loader2, Zap, ArrowRight, ExternalLink, RefreshCw,
+  Wallet,
 } from "lucide-react";
 import type { PipelineStage } from "./ActionFeed";
 import type { ActionEntry } from "./ActionFeed";
@@ -18,6 +19,8 @@ interface ChatMessage {
   role: MessageRole;
   content: string;
   timestamp: string;
+  /** Wallet ID used for this prompt (stored at send time) */
+  walletId?: string;
   /** If this message is followed by an action, attach it here */
   action?: ActionEntry;
 }
@@ -396,7 +399,7 @@ export default function AgentChat({ selectedWalletId }: AgentChatProps) {
     setLoading(true);
 
     // 1. User message
-    addMsg({ role: "user", content: prompt });
+    addMsg({ role: "user", content: prompt, walletId: selectedWalletId ?? undefined });
 
     // 2. Pending action entry
     const actionId = crypto.randomUUID();
@@ -528,6 +531,12 @@ export default function AgentChat({ selectedWalletId }: AgentChatProps) {
                       maxWidth: "80%",
                       whiteSpace: "pre-wrap",
                     }}>
+                      {isUser && msg.walletId && (
+                        <div style={{ fontSize: 10, color: "var(--text-muted)", marginBottom: 3, display: "flex", alignItems: "center", gap: 4, fontWeight: 600, letterSpacing: "0.02em" }}>
+                          <Wallet size={9} />
+                          <span className="mono">{msg.walletId.slice(0, 6)}…{msg.walletId.slice(-4)}</span>
+                        </div>
+                      )}
                       {msg.content}
                     </div>
                   )}
