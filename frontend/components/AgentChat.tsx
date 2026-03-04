@@ -281,8 +281,9 @@ function InlineActionCard({ action, onRetry }: { action: ActionEntry; onRetry?: 
 
 const EXAMPLE_PROMPTS = [
   "Transfer 0.001 SOL to a peer wallet",
+  "Swap 0.00051 SOL for USDC",
   "Create a new SPL token with 9 decimals",
-  "Mint 100 tokens to a peer wallet",
+  // "Mint 100 tokens to a peer wallet",
 ];
 
 // ── AgentChat ──────────────────────────────────────────────────────────────
