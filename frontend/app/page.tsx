@@ -65,6 +65,10 @@ export default function Home() {
   // Mobile: drawer open
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
+  // Bumped after each agent execution to trigger wallet balance refresh
+  const [walletRefreshKey, setWalletRefreshKey] = useState(0);
+  const bumpRefresh = () => setWalletRefreshKey((k) => k + 1);
+
   const SIDEBAR_W = 220;
 
   return (
@@ -135,7 +139,7 @@ export default function Home() {
                 <AnimatePresence>
                   {walletOpen && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} style={{ height: "100%", width: SIDEBAR_W, overflow: "hidden" }}>
-                      <WalletPanel selectedWalletId={selectedWalletId} onSelect={setSelectedWalletId} />
+                      <WalletPanel selectedWalletId={selectedWalletId} onSelect={setSelectedWalletId} refreshKey={walletRefreshKey} />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -153,7 +157,7 @@ export default function Home() {
                 >
                   {walletOpen ? <ChevronLeft size={12} /> : <ChevronRight size={12} />}
                 </button>
-                <AgentChat selectedWalletId={selectedWalletId} />
+                <AgentChat selectedWalletId={selectedWalletId} onActionComplete={bumpRefresh} />
               </div>
             </div>
           )}
@@ -162,7 +166,7 @@ export default function Home() {
           {isMobile && (
             <>
               <div style={{ height: "100%", overflow: "hidden" }}>
-                <AgentChat selectedWalletId={selectedWalletId} />
+                <AgentChat selectedWalletId={selectedWalletId} onActionComplete={bumpRefresh} />
               </div>
 
               <AnimatePresence>
@@ -180,6 +184,7 @@ export default function Home() {
                         selectedWalletId={selectedWalletId}
                         onSelect={setSelectedWalletId}
                         onClose={() => setMobileDrawerOpen(false)}
+                        refreshKey={walletRefreshKey}
                       />
                     </motion.div>
                   </>

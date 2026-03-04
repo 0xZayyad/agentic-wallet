@@ -16,6 +16,8 @@ interface WalletPanelProps {
   selectedWalletId: string | null;
   onSelect: (id: string) => void;
   onClose?: () => void;
+  /** Bump this number to trigger a wallet refresh (e.g. after agent execution) */
+  refreshKey?: number;
 }
 
 function CopyButton({ text }: { text: string }) {
@@ -48,7 +50,7 @@ function CopyButton({ text }: { text: string }) {
   );
 }
 
-export default function WalletPanel({ selectedWalletId, onSelect, onClose }: WalletPanelProps) {
+export default function WalletPanel({ selectedWalletId, onSelect, onClose, refreshKey = 0 }: WalletPanelProps) {
   const [wallets, setWallets] = useState<WalletEntry[]>([]);
   const [loading, setLoading] = useState(true);   // only true on first load
   const [refreshing, setRefreshing] = useState(false);
@@ -90,12 +92,19 @@ export default function WalletPanel({ selectedWalletId, onSelect, onClose }: Wal
     }
   };
 
+  // Initial fetch on mount
   useEffect(() => {
     void fetchWallets();
-    intervalRef.current = setInterval(() => void fetchWallets(false), 20_000);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Re-fetch whenever refreshKey changes (after agent execution)
+  useEffect(() => {
+    if (refreshKey > 0) {
+      void fetchWallets();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey]);
 
 
   return (

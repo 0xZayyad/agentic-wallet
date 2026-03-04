@@ -27,6 +27,8 @@ interface ChatMessage {
 
 interface AgentChatProps {
   selectedWalletId: string | null;
+  /** Called after each agent action completes (success or failure) */
+  onActionComplete?: () => void;
 }
 
 // ── Stage track visualiser (compact, inline) ──────────────────────────────
@@ -291,7 +293,7 @@ const EXAMPLE_PROMPTS = [
 
 // ── AgentChat ──────────────────────────────────────────────────────────────
 
-export default function AgentChat({ selectedWalletId }: AgentChatProps) {
+export default function AgentChat({ selectedWalletId, onActionComplete }: AgentChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -384,6 +386,7 @@ export default function AgentChat({ selectedWalletId }: AgentChatProps) {
       setLoading(false);
       scrollBottom();
       textareaRef.current?.focus();
+      onActionComplete?.();
     }
   };
 
