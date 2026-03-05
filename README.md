@@ -4,7 +4,8 @@
 
 ## 🎬 Demo
 
-[![Watch the Demo](https://img.shields.io/badge/▶_Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/cefW4QRo1Ok)
+[![Watch Core Wallet Agent Demo](https://img.shields.io/badge/▶_Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/cefW4QRo1Ok)
+[![Watch LLM Agent Demo](https://img.shields.io/badge/▶_Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/EWCTTyLtFvE)
 
 [Watch Demo](https://youtu.be/cefW4QRo1Ok)
 
