@@ -2,6 +2,8 @@
 
 Agentic Wallet provides a first-class AI integration layer that converts plain-English prompts into validated, policy-checked on-chain transactions — without the model ever touching private keys.
 
+[![Watch LLM Agent Demo](https://img.shields.io/badge/▶_Watch_Demo-YouTube-red?style=for-the-badge&logo=youtube)](https://youtu.be/EWCTTyLtFvE)
+
 ## How It Works
 
 A user types a natural-language request (e.g. *"Send 0.01 SOL to wallet X"*). The system interprets, validates, and executes it through a strict pipeline:
